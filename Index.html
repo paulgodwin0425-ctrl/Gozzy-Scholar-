@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gozzy Scholar - Learn. Grow. Excel.</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { colors: { primary: '#2563EB', primaryHover: '#1D4ED8', primaryLight: '#EFF6FF', bgLight: '#F3F4F6', accentGreen: '#22C55E', accentRed: '#EF4444', accentOrange: '#F97316', darkBg: '#111827', darkCard: '#1F2937' } } }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background-color: #CBD5E1; border-radius: 10px; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .hide-view { display: none !important; }
+    </style>
+</head>
+<body class="bg-bgLight text-gray-800 dark:bg-darkBg dark:text-gray-100 antialiased overflow-x-hidden font-sans">
+
+    <!-- [Keep your existing Header and Sidebar code here, they remain the same] -->
+    <!-- (I have omitted them for brevity in this block, ensure you paste them back in) -->
+
+    <!-- Updated Auth Section -->
+    <section id="view-auth" class="flex-1 flex items-center justify-center p-4 fade-in hide-view bg-bgLight dark:bg-darkBg">
+        <div class="w-full max-w-md bg-white dark:bg-darkCard rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+            <div class="bg-primaryLight dark:bg-gray-800 p-6 text-center border-b border-gray-100 dark:border-gray-700">
+                <h2 id="auth-title" class="text-2xl font-bold text-gray-800 dark:text-white">Welcome Back</h2>
+            </div>
+            <div class="p-6">
+                <!-- Login/Signup Form Logic -->
+                <form id="auth-form" class="space-y-4">
+                    <input type="email" id="email" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700" placeholder="Email Address">
+                    <input type="password" id="password" required class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700" placeholder="Password">
+                    <button type="submit" id="auth-btn" class="w-full bg-primary text-white font-semibold py-2.5 rounded-lg">Sign In</button>
+                </form>
+                <div class="mt-6 text-center">
+                    <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-primary hover:underline">Don't have an account? Register</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Firebase Initialization
+        const firebaseConfig = {
+            apiKey: "AIzaSyAS-K_2PXcUl2zDgsmiQq7Mq_a7B1J-m3s",
+            authDomain: "gozzy-scholar.firebaseapp.com",
+            projectId: "gozzy-scholar",
+            storageBucket: "gozzy-scholar.firebasestorage.app",
+            messagingSenderId: "5572719519",
+            appId: "1:5572719519:web:8f30447f8c3d003b05c3aa",
+            measurementId: "G-13B4XK2XBY"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Auth Logic
+        let isLogin = true;
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                if (isLogin) {
+                    await auth.signInWithEmailAndPassword(email, password);
+                    alert("Logged in successfully!");
+                    navigate('dashboard');
+                } else {
+                    await auth.createUserWithEmailAndPassword(email, password);
+                    alert("Account created!");
+                    navigate('dashboard');
+                }
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        function toggleAuthMode() {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "Welcome Back" : "Create Account";
+            document.getElementById('auth-btn').innerText = isLogin ? "Sign In" : "Sign Up";
+            document.getElementById('auth-switch-btn').innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+        }
+    </script>
+</body>
+</html>
